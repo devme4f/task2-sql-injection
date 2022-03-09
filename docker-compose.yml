@@ -1,0 +1,31 @@
+version: '3'
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "8080:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+            - ./app:/app
+        extra_hosts: # :(
+            - "host.docker.internal:host-gateway"
+    php:
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
+        volumes:
+            - ./app:/app
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: 'ro0tp4s5wo7d'
+            MYSQL_USER: 'devme4f'
+            MYSQL_PASSWORD: '4dm1np455w0rd'
+            MYSQL_DATABASE: 'tranning'
+        volumes:
+            - mysqldata:/var/lib/mysql
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        ports:
+            - 3306:3306
+volumes:
+    mysqldata: {}
